@@ -8,9 +8,9 @@ import IconButton from '@mui/material/IconButton'
 
 const footerLinks = {
   producto: [
-    { name: 'Funciones', href: '#features' },
-    { name: 'Dashboard', href: '#dashboard' },
-    { name: 'Precios', href: '#pricing' },
+    { name: 'Funciones', href: '/#features' },
+    { name: 'Dashboard', href: '/#dashboard' },
+    { name: 'Precios', href: '/#pricing' },
     { name: 'Integraciones', href: '#' },
     { name: 'Actualizaciones', href: '#' },
   ],
@@ -27,8 +27,8 @@ const footerLinks = {
     { name: 'Estado del sistema', href: '#' },
   ],
   legal: [
-    { name: 'Privacidad', href: '#' },
-    { name: 'Términos', href: '#' },
+    { name: 'Privacidad', href: '/privacidad' },
+    { name: 'Términos', href: '/terminos' },
     { name: 'Cookies', href: '#' },
   ],
 }

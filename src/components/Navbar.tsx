@@ -10,10 +10,10 @@ import MuiLink from '@mui/material/Link'
 import Divider from '@mui/material/Divider'
 
 const navLinks = [
-  { label: 'Funciones', href: '#features' },
-  { label: 'Dashboard', href: '#dashboard' },
-  { label: 'Precios', href: '#pricing' },
-  { label: 'Testimonios', href: '#testimonials' },
+  { label: 'Funciones', href: '/#features' },
+  { label: 'Dashboard', href: '/#dashboard' },
+  { label: 'Precios', href: '/#pricing' },
+  { label: 'Testimonios', href: '/#testimonials' },
 ]
 
 export default function Navbar() {
@@ -91,7 +91,7 @@ export default function Navbar() {
               >
                 Iniciar sesión
               </MuiLink>
-              <Button variant="contained" color="primary" size="small" onClick={() => navigate('/login')}>
+              <Button variant="contained" color="primary" size="small" onClick={() => navigate('/sign-up')}>
                 Comenzar gratis
               </Button>
             </Box>
@@ -142,7 +142,7 @@ export default function Navbar() {
                     >
                       Iniciar sesión
                     </MuiLink>
-                    <Button variant="contained" color="primary" fullWidth onClick={() => { setIsOpen(false); navigate('/login') }}>
+                    <Button variant="contained" color="primary" fullWidth onClick={() => { setIsOpen(false); navigate('/sign-up') }}>
                       Comenzar gratis
                     </Button>
                   </Box>
