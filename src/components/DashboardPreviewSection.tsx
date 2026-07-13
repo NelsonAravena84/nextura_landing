@@ -156,7 +156,7 @@ export default function DashboardPreviewSection() {
         >
           <Box sx={{ textAlign: 'center', mb: 8 }}>
             <Chip
-              label="Dashboard de gastos"
+              label="Dashboard de gastoss"
               sx={{
                 borderRadius: 10,
                 border: '1px solid',
