@@ -12,7 +12,9 @@ import CircularProgress from '@mui/material/CircularProgress'
 import { Checkbox, FormControlLabel } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import GoogleSignInButton from '../components/GoogleSignInButton'
+import PasswordStrength from '../components/PasswordStrength'
 import { registerUser } from '../API/auth'
+import { validatePassword } from '../API/passwordValidation'
 
 export default function Signup() {
   const navigate = useNavigate()
@@ -44,8 +46,13 @@ export default function Signup() {
       return
     }
 
-    if (password.length < 6) {
-      setSnackbar({ open: true, message: 'La contraseña debe tener al menos 6 caracteres.', severity: 'error' })
+    const passwordErrors = validatePassword(password)
+    if (passwordErrors.length > 0) {
+      setSnackbar({
+        open: true,
+        message: `La contraseña no cumple los requisitos: ${passwordErrors[0]}.`,
+        severity: 'error',
+      })
       return
     }
 
@@ -69,7 +76,9 @@ export default function Signup() {
       setSnackbar({ open: true, message: 'Registro exitoso. Bienvenido a Nextura.', severity: 'success' })
       setTimeout(() => window.location.href = `https://nextura-app.pages.dev/?token=${data.token}`, 1000)
     } catch (err: any) {
-      const msg = err.response?.data?.message || 'Error al registrarse. Intenta de nuevo.'
+      const msg = err.response?.data?.details
+        ? `La contraseña no cumple: ${err.response.data.details[0]}`
+        : err.response?.data?.error || 'Error al registrarse. Intenta de nuevo.'
       setSnackbar({ open: true, message: msg, severity: 'error' })
     } finally {
       setLoading(false)
@@ -94,6 +103,7 @@ export default function Signup() {
               required
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
+              inputProps={{ minLength: 2, maxLength: 100 }}
             />
             <TextField
               label="Correo Electrónico"
@@ -102,15 +112,20 @@ export default function Signup() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              inputProps={{ maxLength: 255 }}
             />
-            <TextField
-              label="Contraseña"
-              type="password"
-              fullWidth
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <Box>
+              <TextField
+                label="Contraseña"
+                type="password"
+                fullWidth
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                inputProps={{ maxLength: 128 }}
+              />
+              <PasswordStrength password={password} />
+            </Box>
             <TextField
               label="Confirmar Contraseña"
               type="password"
@@ -118,15 +133,17 @@ export default function Signup() {
               required
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              error={confirmPassword.length > 0 && password !== confirmPassword}
+              helperText={confirmPassword.length > 0 && password !== confirmPassword ? 'Las contraseñas no coinciden' : ''}
             />
             <Box sx={{ display: 'grid', gap: 1 }}>
               <FormControlLabel
                 control={<Checkbox checked={acceptTerms} onChange={(e) => setAcceptTerms(e.target.checked)} />}
-                label="Acepto los términos y condiciones."
+                label="Acepto los terminos y condiciones."
               />
               <FormControlLabel
                 control={<Checkbox checked={acceptPrivacy} onChange={(e) => setAcceptPrivacy(e.target.checked)} />}
-                label="He leído la política de privacidad."
+                label="He leído la politica de privacidad."
               />
               <FormControlLabel
                 control={<Checkbox checked={acceptEmails} onChange={(e) => setAcceptEmails(e.target.checked)} />}
@@ -155,7 +172,7 @@ export default function Signup() {
                 onClick={() => navigate('/login')}
                 sx={{ color: 'primary.light', cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
               >
-                Inicia sesión
+                Inicia sesion
               </Box>
             </Typography>
             <Button variant="text" onClick={() => navigate('/')} sx={{ color: 'text.secondary' }}>

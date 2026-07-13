@@ -37,11 +37,15 @@ export default function Login() {
     try {
       const data = await loginUser({ email, password })
       localStorage.setItem('token', data.token)
-      setSnackbar({ open: true, message: 'Inicio de sesión exitoso.', severity: 'success' })
+      setSnackbar({ open: true, message: 'Inicio de sesion exitoso.', severity: 'success' })
       setTimeout(() => window.location.href = `https://nextura-app.pages.dev/?token=${data.token}`, 1000)
     } catch (err: any) {
-      const msg = err.response?.data?.message || 'Error al iniciar sesión. Intenta de nuevo.'
-      setSnackbar({ open: true, message: msg, severity: 'error' })
+      if (err.response?.status === 429) {
+        setSnackbar({ open: true, message: 'Demasiados intentos. Espera unos minutos antes de intentar de nuevo.', severity: 'error' })
+      } else {
+        const msg = err.response?.data?.error || 'Error al iniciar sesion. Intenta de nuevo.'
+        setSnackbar({ open: true, message: msg, severity: 'error' })
+      }
     } finally {
       setLoading(false)
     }
@@ -52,27 +56,29 @@ export default function Login() {
       <Container maxWidth="sm">
         <Paper sx={{ p: 6, bgcolor: 'rgba(15,15,20,0.8)', backdropFilter: 'blur(24px)', border: '1px solid', borderColor: 'divider' }}>
           <Typography variant="h4" sx={{ fontWeight: 600, mb: 1, textAlign: 'center' }}>
-            Iniciar sesión
+            Iniciar sesion
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 4, textAlign: 'center' }}>
             Accede a tu cuenta de Nextura
           </Typography>
           <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <TextField
-              label="Correo electrónico"
+              label="Correo electronico"
               type="email"
               fullWidth
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              inputProps={{ maxLength: 255, autoComplete: 'email' }}
             />
             <TextField
-              label="Contraseña"
+              label="Contrasena"
               type="password"
               fullWidth
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              inputProps={{ maxLength: 128, autoComplete: 'current-password' }}
             />
             <Button
               variant="contained"
@@ -83,7 +89,7 @@ export default function Login() {
               disabled={loading}
               sx={{ mt: 2 }}
             >
-              {loading ? <CircularProgress size={24} sx={{ color: 'white' }} /> : 'Iniciar sesión'}
+              {loading ? <CircularProgress size={24} sx={{ color: 'white' }} /> : 'Iniciar sesion'}
             </Button>
             <Divider sx={{ my: 1, color: 'text.secondary', '&::before, &::after': { borderColor: 'divider' } }}>
               <Typography variant="body2" color="text.secondary" sx={{ px: 1 }}>o</Typography>
