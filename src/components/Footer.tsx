@@ -54,7 +54,7 @@ export default function Footer() {
                 Comienza a organizar tu hogar hoy
               </Typography>
               <Typography sx={{ mx: 'auto', mt: 2, maxWidth: 500, color: 'text.secondary' }}>
-                Únete a miles de usuarios que ya disfrutan de tranquilidad financiera con Nextura.
+                Centraliza tus servicios básicos, anticipa tus gastos y gana control y transparencia sobre las cuentas del hogar con Nextura.
               </Typography>
               <Box sx={{ mt: 4, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'center', justifyContent: 'center', gap: 2 }}>
                 <Button
@@ -151,7 +151,7 @@ export default function Footer() {
             pt: 4,
           }}>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              &copy; 2024 Nextura. Todos los derechos reservados.
+              &copy; 2026 Nextura. Todos los derechos reservados.
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               Hecho con ♥ en Chile

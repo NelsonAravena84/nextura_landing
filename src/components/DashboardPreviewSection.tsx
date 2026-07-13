@@ -1,28 +1,140 @@
+import React from 'react'
 import { motion } from 'framer-motion'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import Chip from '@mui/material/Chip'
-import Button from '@mui/material/Button'
 
-const dashboardData = {
-  categories: [
-    { name: 'Electricidad', percentage: 35, color: '#eab308' },
-    { name: 'Internet', percentage: 25, color: '#a855f7' },
-    { name: 'Gas', percentage: 22, color: '#f97316' },
-    { name: 'Agua', percentage: 18, color: '#3b82f6' },
-  ],
-  recentPayments: [
-    { service: 'Enel Distribución', date: '12 Jun 2024', amount: 45200, status: 'completed' },
-    { service: 'Movistar Fibra', date: '10 Jun 2024', amount: 29990, status: 'completed' },
-    { service: 'Metrogas', date: '08 Jun 2024', amount: 32100, status: 'completed' },
-    { service: 'Aguas Andinas', date: '05 Jun 2024', amount: 18500, status: 'pending' },
-  ],
-  upcomingPayments: [
-    { service: 'Aguas Andinas', dueDate: '15 Jun', amount: 18500 },
-    { service: 'Enel Distribución', dueDate: '20 Jun', amount: 47000 },
-    { service: 'Netflix', dueDate: '25 Jun', amount: 12990 },
-  ],
+type Category = {
+  name: string
+  boletas: number
+  accumulated: string
+  color: string
+  icon: React.ReactNode
+  points: number[]
+  periods: string[]
+}
+
+const categories: Category[] = [
+  {
+    name: 'Electricidad',
+    boletas: 4,
+    accumulated: '$99.750',
+    color: '#4ade80',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+    ),
+    points: [24390, 26780, 25430, 23150],
+    periods: ['2025-08', '2025-09', '2025-10', '2025-11'],
+  },
+  {
+    name: 'Agua',
+    boletas: 4,
+    accumulated: '$76.200',
+    color: '#38bdf8',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" />
+      </svg>
+    ),
+    points: [19800, 20900, 18700, 16800],
+    periods: ['2025-08', '2025-09', '2025-10', '2025-11'],
+  },
+  {
+    name: 'Internet',
+    boletas: 4,
+    accumulated: '$120.960',
+    color: '#38bdf8',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M5.052 13.344a9.5 9.5 0 0113.896 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0M12 20h.01" />
+      </svg>
+    ),
+    points: [28800, 30240, 30240, 33900],
+    periods: ['2025-08', '2025-09', '2025-10', '2025-11'],
+  },
+  {
+    name: 'Telefonía',
+    boletas: 4,
+    accumulated: '$64.470',
+    color: '#4ade80',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+      </svg>
+    ),
+    points: [14800, 16100, 16220, 17350],
+    periods: ['2025-08', '2025-09', '2025-10', '2025-11'],
+  },
+]
+
+function LineChart({ points, color }: { points: number[]; color: string }) {
+  const width = 320
+  const height = 120
+  const padX = 8
+  const padY = 12
+  const min = Math.min(...points)
+  const max = Math.max(...points)
+  const range = max - min || 1
+
+  const coords = points.map((p, i) => {
+    const x = padX + (i / (points.length - 1)) * (width - padX * 2)
+    const y = padY + (1 - (p - min) / range) * (height - padY * 2)
+    return { x, y }
+  })
+
+  const linePath = coords.map((c, i) => `${i === 0 ? 'M' : 'L'} ${c.x} ${c.y}`).join(' ')
+  const areaPath = `${linePath} L ${coords[coords.length - 1].x} ${height} L ${coords[0].x} ${height} Z`
+  const gradientId = `grad-${color.replace('#', '')}`
+
+  return (
+    <Box sx={{ position: 'relative', width: '100%' }}>
+      <svg viewBox={`0 0 ${width} ${height}`} width="100%" height="120" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={color} stopOpacity={0.25} />
+            <stop offset="100%" stopColor={color} stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        {[0.25, 0.5, 0.75].map((g) => (
+          <line
+            key={g}
+            x1={padX}
+            x2={width - padX}
+            y1={padY + g * (height - padY * 2)}
+            y2={padY + g * (height - padY * 2)}
+            stroke="rgba(255,255,255,0.06)"
+            strokeDasharray="3 4"
+          />
+        ))}
+        <motion.path
+          d={areaPath}
+          fill={`url(#${gradientId})`}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+        />
+        <motion.path
+          d={linePath}
+          fill="none"
+          stroke={color}
+          strokeWidth={2.5}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          initial={{ pathLength: 0 }}
+          whileInView={{ pathLength: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1 }}
+        />
+        {coords.map((c, i) => (
+          <circle key={i} cx={c.x} cy={c.y} r={3.5} fill={color} />
+        ))}
+      </svg>
+    </Box>
+  )
 }
 
 export default function DashboardPreviewSection() {
@@ -31,7 +143,7 @@ export default function DashboardPreviewSection() {
       {/* Background */}
       <Box sx={{ pointerEvents: 'none', position: 'absolute', inset: 0 }}>
         <Box sx={{ position: 'absolute', top: 0, right: 0, width: 600, height: 600, borderRadius: '50%', bgcolor: 'rgba(107,140,255,0.1)', filter: 'blur(120px)' }} />
-        <Box sx={{ position: 'absolute', bottom: 0, left: 0, width: 400, height: 400, borderRadius: '50%', bgcolor: 'rgba(168,85,247,0.1)', filter: 'blur(100px)' }} />
+        <Box sx={{ position: 'absolute', bottom: 0, left: 0, width: 400, height: 400, borderRadius: '50%', bgcolor: 'rgba(74,222,128,0.08)', filter: 'blur(100px)' }} />
       </Box>
 
       <Container maxWidth="xl" sx={{ position: 'relative' }}>
@@ -44,7 +156,7 @@ export default function DashboardPreviewSection() {
         >
           <Box sx={{ textAlign: 'center', mb: 8 }}>
             <Chip
-              label="Dashboard"
+              label="Dashboard de gastos"
               sx={{
                 borderRadius: 10,
                 border: '1px solid',
@@ -56,10 +168,10 @@ export default function DashboardPreviewSection() {
               }}
             />
             <Typography variant="h2" sx={{ mt: 3, fontSize: { xs: '1.875rem', sm: '2.25rem', lg: '3rem' } } as any}>
-              Un panel diseñado para ti
+              Evolución histórica de tus servicios
             </Typography>
             <Typography sx={{ mx: 'auto', mt: 2, maxWidth: 600, color: 'text.secondary', fontSize: '1.125rem' }}>
-              Visualiza tus gastos, pagos pendientes y estadísticas en tiempo real con una interfaz intuitiva.
+              Visualiza la evolución de montos por categoría de servicio y detecta variaciones de consumo mes a mes.
             </Typography>
           </Box>
         </motion.div>
@@ -78,7 +190,7 @@ export default function DashboardPreviewSection() {
               position: 'absolute',
               top: -8, left: -8, right: -8, bottom: -8,
               borderRadius: 4,
-              background: 'linear-gradient(90deg, rgba(107,140,255,0.2), rgba(168,85,247,0.2), rgba(107,140,255,0.2))',
+              background: 'linear-gradient(90deg, rgba(107,140,255,0.2), rgba(74,222,128,0.15), rgba(107,140,255,0.2))',
               filter: 'blur(16px)',
             }}
           />
@@ -89,185 +201,59 @@ export default function DashboardPreviewSection() {
             border: '1px solid',
             borderColor: 'divider',
             bgcolor: 'rgba(24,24,31,0.8)',
-            p: 3,
+            p: { xs: 2, sm: 3 },
             backdropFilter: 'blur(24px)',
             boxShadow: '0 25px 50px 0 rgba(0,0,0,0.5)',
           }}>
-            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '1fr 1fr 1fr' }, gap: 3 }}>
-              {/* Left column - Pie chart */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <Box sx={{ borderRadius: 2, border: '1px solid', borderColor: 'divider', bgcolor: 'rgba(15,15,20,0.5)', p: 2.5 }}>
-                  <Typography variant="body2" sx={{ fontWeight: 500, mb: 2 }}>Distribución de gastos</Typography>
-                  
-                  {/* Simple pie chart visualization */}
-                  <Box sx={{ position: 'relative', mx: 'auto', width: 192, height: 192 }}>
-                    <svg viewBox="0 0 100 100" width="100%" height="100%" style={{ transform: 'rotate(-90deg)' }}>
-                      {(() => {
-                        let accumulated = 0
-                        const colors = ['#eab308', '#a855f7', '#f97316', '#3b82f6']
-                        return dashboardData.categories.map((cat, i) => {
-                          const circumference = 2 * Math.PI * 40
-                          const strokeDasharray = `${(cat.percentage / 100) * circumference} ${circumference}`
-                          const strokeDashoffset = -(accumulated / 100) * circumference
-                          accumulated += cat.percentage
-                          return (
-                            <circle
-                              key={cat.name}
-                              cx="50" cy="50" r="40"
-                              fill="none"
-                              stroke={colors[i]}
-                              strokeWidth="20"
-                              strokeDasharray={strokeDasharray}
-                              strokeDashoffset={strokeDashoffset}
-                              style={{ transition: 'all 0.5s' }}
-                            />
-                          )
-                        })
-                      })()}
-                    </svg>
-                    <Box sx={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Box sx={{ textAlign: 'center' }}>
-                        <Typography variant="h5" sx={{ fontWeight: 700 }}>$125k</Typography>
-                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>Total mes</Typography>
+            {/* Header inside panel */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
+              <Box sx={{ width: 40, height: 40, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'rgba(107,140,255,0.15)' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b8cff" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a1 1 0 00-1-1H6a1 1 0 00-1 1v6m4 0h6m-6 0v-9a1 1 0 011-1h2a1 1 0 011 1v9m0 0h4a1 1 0 001-1V8a1 1 0 00-1-1h-2a1 1 0 00-1 1v10" />
+                </svg>
+              </Box>
+              <Box>
+                <Typography variant="body1" sx={{ fontWeight: 700 }}>Dashboard de gastos</Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>Evolución histórica de montos por categoría de servicio.</Typography>
+              </Box>
+            </Box>
+
+            {/* Category cards grid */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: { xs: 2, sm: 3 } }}>
+              {categories.map((cat, i) => (
+                <motion.div
+                  key={cat.name}
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.1 + i * 0.1 }}
+                >
+                  <Box sx={{ borderRadius: 2, border: '1px solid', borderColor: 'divider', bgcolor: 'rgba(15,15,20,0.6)', p: { xs: 2, sm: 2.5 } }}>
+                    {/* Card header */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+                      <Box sx={{ width: 40, height: 40, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'rgba(42,42,62,0.6)' }}>
+                        {cat.icon}
+                      </Box>
+                      <Box>
+                        <Typography variant="body2" sx={{ fontWeight: 700 }}>{cat.name}</Typography>
+                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                          {cat.boletas} boletas · {cat.accumulated} acumulado
+                        </Typography>
                       </Box>
                     </Box>
-                  </Box>
 
-                  {/* Legend */}
-                  <Box sx={{ mt: 2, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
-                    {dashboardData.categories.map((cat) => (
-                      <Box key={cat.name} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: cat.color }} />
-                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>{cat.name}</Typography>
-                      </Box>
-                    ))}
-                  </Box>
-                </Box>
-              </motion.div>
+                    {/* Chart */}
+                    <LineChart points={cat.points} color={cat.color} />
 
-              {/* Middle column - Recent payments */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              >
-                <Box sx={{ borderRadius: 2, border: '1px solid', borderColor: 'divider', bgcolor: 'rgba(15,15,20,0.5)', p: 2.5 }}>
-                  <Typography variant="body2" sx={{ fontWeight: 500, mb: 2 }}>Pagos recientes</Typography>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                    {dashboardData.recentPayments.map((payment, i) => (
-                      <motion.div
-                        key={payment.service}
-                        initial={{ opacity: 0, x: -10 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.3, delay: 0.4 + i * 0.1 }}
-                      >
-                        <Box sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          borderRadius: 1,
-                          bgcolor: 'rgba(42,42,62,0.3)',
-                          p: 1.5,
-                        }}>
-                          <Box sx={{ minWidth: 0, flex: 1 }}>
-                            <Typography variant="body2" sx={{ fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                              {payment.service}
-                            </Typography>
-                            <Typography variant="caption" sx={{ color: 'text.secondary' }}>{payment.date}</Typography>
-                          </Box>
-                          <Box sx={{ textAlign: 'right', ml: 2 }}>
-                            <Typography variant="body2" sx={{ fontWeight: 500 }}>${payment.amount.toLocaleString()}</Typography>
-                            <Typography variant="caption" sx={{ color: payment.status === 'completed' ? 'success.main' : 'warning.main' }}>
-                              {payment.status === 'completed' ? 'Pagado' : 'Pendiente'}
-                            </Typography>
-                          </Box>
-                        </Box>
-                      </motion.div>
-                    ))}
-                  </Box>
-                </Box>
-              </motion.div>
-
-              {/* Right column - Upcoming & alerts */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-              >
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                  {/* Upcoming payments */}
-                  <Box sx={{ borderRadius: 2, border: '1px solid', borderColor: 'divider', bgcolor: 'rgba(15,15,20,0.5)', p: 2.5 }}>
-                    <Typography variant="body2" sx={{ fontWeight: 500, mb: 2 }}>Próximos vencimientos</Typography>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                      {dashboardData.upcomingPayments.map((payment) => (
-                        <Box key={payment.service} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                            <Box sx={{
-                              display: 'flex',
-                              width: 32,
-                              height: 32,
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              borderRadius: 1,
-                              bgcolor: 'rgba(107,140,255,0.1)',
-                              fontSize: '0.75rem',
-                              fontWeight: 500,
-                              color: 'primary.main',
-                            }}>
-                              {payment.dueDate.split(' ')[0]}
-                            </Box>
-                            <Typography variant="body2">{payment.service}</Typography>
-                          </Box>
-                          <Typography variant="body2" sx={{ fontWeight: 500 }}>${payment.amount.toLocaleString()}</Typography>
-                        </Box>
+                    {/* X axis labels */}
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                      {cat.periods.map((p) => (
+                        <Typography key={p} variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem' }}>{p}</Typography>
                       ))}
                     </Box>
                   </Box>
-
-                  {/* Quick action card */}
-                  <Box sx={{
-                    borderRadius: 2,
-                    border: '1px solid',
-                    borderColor: 'rgba(107,140,255,0.3)',
-                    background: 'linear-gradient(135deg, rgba(107,140,255,0.1), rgba(168,85,247,0.1))',
-                    p: 2.5,
-                  }}>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-                      <Box sx={{
-                        display: 'flex',
-                        width: 40,
-                        height: 40,
-                        flexShrink: 0,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderRadius: '50%',
-                        bgcolor: 'rgba(107,140,255,0.2)',
-                      }}>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b8cff" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                      </Box>
-                      <Box>
-                        <Typography variant="body2" sx={{ fontWeight: 500 }}>Pago rápido</Typography>
-                        <Typography variant="caption" sx={{ color: 'text.secondary', mt: 0.5, display: 'block' }}>
-                          Paga todas tus boletas pendientes con un solo clic.
-                        </Typography>
-                        <Button variant="text" size="small" sx={{ mt: 1, color: 'primary.main', fontSize: '0.75rem', p: 0, minWidth: 0 }}>
-                          Pagar ahora →
-                        </Button>
-                      </Box>
-                    </Box>
-                  </Box>
-                </Box>
-              </motion.div>
+                </motion.div>
+              ))}
             </Box>
           </Box>
         </motion.div>

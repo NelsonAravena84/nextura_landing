@@ -97,7 +97,7 @@ export default function HeroSection() {
                   />
                 </Box>
               }
-              label="Nuevo: Integración con bancos"
+              label="Nuevo: Lectura de medidores y estimación de consumo"
               sx={{
                 borderRadius: 10,
                 border: '1px solid',
@@ -157,8 +157,9 @@ export default function HeroSection() {
                 fontSize: { xs: '1rem', sm: '1.125rem' },
               }}
             >
-              Centraliza, registra y gestiona todas tus boletas y servicios básicos
-              desde un único panel inteligente. Organización, tranquilidad y control financiero.
+              Centraliza electricidad, agua, internet y telefonía en una sola plataforma.
+              Registra tus boletas, proyecta el monto de la próxima factura y detecta cobros
+              irregulares para tener más control y transparencia sobre los gastos del hogar.
             </Typography>
           </motion.div>
 

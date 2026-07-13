@@ -26,7 +26,7 @@ const testimonials = [
   {
     name: 'Andrés Villalobos',
     role: 'Emprendedor',
-    content: 'Los recordatorios inteligentes son un cambio de juego. Ya no tengo que preocuparme de nada, la app me avisa con tiempo de todo.',
+    content: 'La detección de anomalías me avisó de un cobro raro en internet que no correspondía a mi historial. Pude reclamar a tiempo. Un cambio de juego.',
     avatar: 'AV',
   },
   {
@@ -38,7 +38,7 @@ const testimonials = [
   {
     name: 'Diego Morales',
     role: 'Padre de familia',
-    content: 'Con 3 hijos, cualquier ahorro es bienvenido. Nextura me ayudó a optimizar nuestro consumo de gas y agua. Increíble herramienta.',
+    content: 'Con 3 hijos, cualquier ahorro es bienvenido. La proyección del monto me deja anticipar cuánto llegará la boleta de agua y electricidad. Increíble herramienta.',
     avatar: 'DM',
   },
 ]
